@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include "matio.h"
+#include "molecule.hpp"
 
 using namespace std;
 
@@ -14,40 +15,91 @@ Matfile::Matfile(string filename) {
   moleculesLoaded = false;
 }
 
-double Matfile::massaxis(int index) {
+// masspoint* Matfile::getPeakdata(int index) {
+//   if(!peakdataLoaded)
+//     loadPeakdata();
+//   return &peakdata[index];
+// }
+
+int Matfile::getPeakdataLength() {
   if(!peakdataLoaded)
     loadPeakdata();
-  return peakdata[index].mass;
+  //return peakdata.size();
+  return massaxisdata.size();
 }
 
-double Matfile::signal(int index) {
+double Matfile::getMassaxis(int index) {
   if(!peakdataLoaded)
     loadPeakdata();
-  return peakdata[index].signal;
+  //return peakdata[index].mass;
+  return massaxisdata[index];
 }
 
-e_resolutionmethod Matfile::resolutionmethod() {
+double* Matfile::getMassaxisArr() {
+  if(!peakdataLoaded)
+    loadPeakdata();
+  return &massaxisdata[0];
+}
+
+double* Matfile::getSignalArr() {
+  if(!peakdataLoaded)
+    loadPeakdata();
+  return &signaldata[0];
+}
+
+double Matfile::getSignal(int index) {
+  if(!peakdataLoaded)
+    loadPeakdata();
+  //return peakdata[index].signal;
+  return signaldata[index];
+}
+
+e_resolutionmethod Matfile::getResolutionmethod() {
   if(!resmethodLoaded)
     loadResmethod();
   return resmethod;
 }
 
-double Matfile::resolutionparam() {
+double Matfile::getResolutionparam() {
   if(!resmethodLoaded)
     loadResmethod();
   return resparam;
 }
 
-double Matfile::resolutionlist(int index) {
+double Matfile::getResolutionlist(int index) {
   if(!resmethodLoaded)
     loadResmethod();
   return reslist[index];
 }
 
-double Matfile::comlist(int index) {
+double* Matfile::getResolutionlistArr() {
+  if(!resmethodLoaded)
+    loadResmethod();
+  return &reslist[0];
+}
+
+int Matfile::getResolutionlistLength() {
+  if(!resmethodLoaded)
+    loadResmethod();
+  return reslist.size();
+}
+  
+double Matfile::getComlist(int index) {
   if(!resmethodLoaded)
     loadResmethod();
   return clist[index];
+}
+
+double* Matfile::getComlistArr() {
+  if(!resmethodLoaded)
+    loadResmethod();
+  return &clist[0];
+}
+ 
+int Matfile::getComlistLength() {
+  if(!resmethodLoaded)
+    loadResmethod();
+  return clist.size();
 }
 
 bool Matfile::loadResmethod() {
@@ -61,7 +113,7 @@ bool Matfile::loadResmethod() {
     resmethod = flat;
   else if("Simplex" == name)
     resmethod = simplex;
-  else if("Pchip" == name)
+  else if("PChip" == name)
     resmethod = pchip;
   else
     resmethod = unknown;
@@ -96,20 +148,23 @@ bool Matfile::loadPeakdata() {
   matvar_t *peakdata_p = getElemByName(matdata, "peakdata");
   if(peakdata_p != NULL) {
     int listlen = peakdata_p->dims[0];
-    //peakdata = new vector<massdata>(listlen);
-    peakdata.resize(listlen);
+    //peakdata.resize(listlen);
+    massaxisdata.resize(listlen);
+    signaldata.resize(listlen);
     for(int i = 0;i < listlen; ++i) {
-      peakdata[i] = {((double *)(peakdata_p->data))[i], ((double *)(peakdata_p->data))[i+listlen]};
+      //peakdata[i] = {((double *)(peakdata_p->data))[i], ((double *)(peakdata_p->data))[i+listlen]};
+      massaxisdata[i] = ((double *)(peakdata_p->data))[i];
+      signaldata[i] = ((double *)(peakdata_p->data))[i+listlen];
     }
     peakdataLoaded = true;
   }
   return true;
 }
 
-shape_t Matfile::shape() {
+shape_t* Matfile::getShape() {
   if(!shapeLoaded)
     loadShape();
-  return s;
+  return &s;
 }
 
 bool Matfile::loadShape() {
@@ -131,10 +186,16 @@ bool Matfile::loadShape() {
   return true;
 }
 
-molecule Matfile::getMolecule(int index) {
+molecule* Matfile::getMolecule(int index) {
   if(!moleculesLoaded)
     loadMolecules();
-  return molecules[index];
+  return &molecules[index];
+}
+
+int Matfile::getMoleculeNumber() {
+  if(!moleculesLoaded)
+    loadMolecules();
+  return molecules.size();
 }
 
 bool Matfile::loadMolecules() {
@@ -145,7 +206,7 @@ bool Matfile::loadMolecules() {
   }
   int molNumber = molecule_p->dims[1];
   int fieldNumber = Mat_VarGetNumberOfFields(molecule_p);
-  cout << "molNumber: " << molNumber << ", fieldNumber: " << fieldNumber << endl;
+  //cout << "molNumber: " << molNumber << ", fieldNumber: " << fieldNumber << endl;
   molecules.resize(molNumber);
   matvar_t **dataarr = (matvar_t **) molecule_p->data;
   for(int i = 0;i < molNumber; ++i) {

@@ -13,7 +13,9 @@ class Matfile: public datafile {
  private:
   mat_t *matfp;
   matvar_t *matdata;
-  std::vector<masspoint> peakdata;
+  //vector<masspoint> peakdata;
+  vector<double> massaxisdata;
+  vector<double> signaldata;
   bool peakdataLoaded;
   bool loadPeakdata();
   matvar_t *getElemByName(matvar_t *parent, string name);
@@ -32,14 +34,23 @@ class Matfile: public datafile {
   Matfile() { };
  public:
   Matfile(string filename);
-  double massaxis(int index);
-  double signal(int index);
-  molecule getMolecule(int index);
-  e_resolutionmethod resolutionmethod();
-  double resolutionparam();
-  double resolutionlist(int index);
-  double comlist(int index);
-  shape_t shape();
+  //masspoint* getPeakdata(int index);
+  int getPeakdataLength();
+  double *getMassaxisArr();
+  double getMassaxis(int index);
+  double *getSignalArr();
+  double getSignal(int index);
+  molecule* getMolecule(int index);
+  int getMoleculeNumber();
+  e_resolutionmethod getResolutionmethod();
+  double getResolutionparam();
+  double getResolutionlist(int index);
+  double* getResolutionlistArr();
+  int getResolutionlistLength();
+  double getComlist(int index);
+  double* getComlistArr();
+  int getComlistLength();
+  shape_t* getShape();
 };
   
 #endif
