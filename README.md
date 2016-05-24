@@ -27,7 +27,6 @@ curl -X POST -H "Content-type: application/json" -d
 
 
 - Alternative kann auch das Google Chrome-Plugin JaSON verwendet werden
-![Screenshot JaSON](JaSON.png)
 
 - Ein, in Java geschriebener Client, befindet sich, in Form eines UnitTests, in `src/test/java/com/example/MyResourceTest.java`.
 
