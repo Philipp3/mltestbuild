@@ -2,6 +2,7 @@
 **Name: Peringer Philipp**
 
 **Mtrkl-Nr.: 1218721**
+
 **Gruppe 3:**  Benjamin Gaugler, Max Lou Hartel-Kaduk, Philipp Peringer
 
 Aufgabe         | Punkte
